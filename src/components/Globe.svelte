@@ -17,6 +17,19 @@
     .scale(250)
     .translate([width / 2, height / 2])
     .clipAngle(90);
+
+  // Function to update projection for responsive sizing
+  function updateProjection() {
+    if (svg) {
+      const rect = svg.getBoundingClientRect();
+      width = rect.width || 600;
+      height = rect.height || 600;
+      
+      projection
+        .translate([width / 2, height / 2])
+        .scale(Math.min(width, height) * 0.4);
+    }
+  }
   
   const path = geoPath().projection(projection);
   const graticule = geoGraticule();
@@ -436,6 +449,9 @@
   onMount(async () => {
     svgElement = d3.select(svg);
     
+    // Update projection for current SVG size
+    updateProjection();
+    
     // Load world data
     worldData = await loadWorldData();
     
@@ -573,14 +589,25 @@
         }, 2000);
       });
     
+    // Add resize listener to update projection
+    const handleResize = () => {
+      updateProjection();
+      if (svgElement) {
+        svgElement.selectAll("path").attr("d", path);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
     return () => {
       clearInterval(rotationTimer);
+      window.removeEventListener('resize', handleResize);
     };
   });
 </script>
 
 <div class="globe-wrapper">
-  <svg bind:this={svg} {width} {height}></svg>
+  <svg bind:this={svg} viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"></svg>
   <div class="globe-controls">
     <button on:click={() => { 
       isRotating = !isRotating;
@@ -609,8 +636,11 @@
       0 0 0 1px rgba(255, 255, 255, 0.1);
     background: radial-gradient(circle at 30% 30%, #374151, #1f2937, #000000);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    max-width: 100%;
+    width: 100%;
     height: auto;
+    max-width: 600px;
+    max-height: 600px;
+    aspect-ratio: 1;
     display: block;
     margin: 0 auto;
   }
@@ -676,8 +706,8 @@
     }
     
     svg {
-      width: min(500px, 90vw);
-      height: min(500px, 90vw);
+      max-width: 500px;
+      max-height: 500px;
     }
   }
   
@@ -688,8 +718,8 @@
     }
     
     svg {
-      width: min(400px, 85vw);
-      height: min(400px, 85vw);
+      max-width: 400px;
+      max-height: 400px;
       border-radius: 16px;
     }
     
@@ -711,8 +741,8 @@
     }
     
     svg {
-      width: min(320px, 85vw);
-      height: min(320px, 85vw);
+      max-width: 320px;
+      max-height: 320px;
       border-radius: 12px;
     }
     
