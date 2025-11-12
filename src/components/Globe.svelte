@@ -555,6 +555,15 @@
         if (countryInfo) {
           selectedCountry.set(countryInfo);
         }
+      })
+      .on("touchend", function(event, d) {
+        // Handle touch end for mobile country selection
+        event.preventDefault();
+        event.stopPropagation();
+        const countryInfo = getCountryInfo(d);
+        if (countryInfo) {
+          selectedCountry.set(countryInfo);
+        }
       });
     
     // Country labels removed for cleaner appearance
@@ -572,17 +581,17 @@
 
     // Helper function to handle drag start
     function handleDragStart(event) {
+      // Check if the target is a country path - if so, let the country click handler work
+      if (event.target && event.target.classList.contains('country')) {
+        return;
+      }
+      
       const coords = getEventCoordinates(event);
       dragStartTime = Date.now();
       dragStartPos = coords;
       lastMouse = coords;
       hasDragged = false;
       isDragging = true;
-      
-      // Only prevent default for touch events to avoid interfering with mouse clicks
-      if (event.type.startsWith('touch')) {
-        event.preventDefault();
-      }
     }
 
     // Helper function to handle drag move
@@ -622,14 +631,15 @@
       const dragDuration = Date.now() - dragStartTime;
       const wasDragging = hasDragged;
       
-      // If it was a quick tap/click without significant movement, don't interfere
-      if (!hasDragged && dragDuration < 300) {
-        isDragging = false;
-        return; // Let the country click handler work
-      }
-      
+      // Reset drag state
       isDragging = false;
       hasDragged = false;
+      
+      // If it was a quick tap/click without significant movement, don't interfere
+      if (!wasDragging && dragDuration < 500) {
+        // This was likely a tap/click - let country selection work
+        return;
+      }
       
       // Only restart auto-rotation if we actually dragged
       if (wasDragging) {
@@ -637,11 +647,6 @@
           isRotating = true;
           startAutoRotation();
         }, 2000);
-        
-        // Prevent default behavior only when we actually dragged
-        if (event.type.startsWith('touch')) {
-          event.preventDefault();
-        }
       }
     }
 
