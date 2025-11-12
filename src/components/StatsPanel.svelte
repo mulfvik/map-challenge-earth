@@ -24,6 +24,13 @@
   function selectCountry(country) {
     selectedCountry.set(country);
   }
+
+  function handleKeydown(event, country) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectCountry(country);
+    }
+  }
 </script>
 
 <div class="stats-container">
@@ -170,6 +177,10 @@
             class="country-item" 
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -191,6 +202,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -212,6 +227,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -229,6 +248,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -250,6 +273,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -267,6 +294,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -284,6 +315,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -305,6 +340,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -322,6 +361,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -339,6 +382,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
@@ -356,6 +403,10 @@
             class="country-item"
             class:selected={$selectedCountry?.iso === country.iso}
             on:click={() => selectCountry(country)}
+            on:keydown={(event) => handleKeydown(event, country)}
+            role="button"
+            tabindex="0"
+            aria-label="Select {country.name}"
           >
             <div class="country-info">
               <span class="rank">#{index + 1}</span>
