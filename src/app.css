@@ -108,8 +108,10 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
+  min-height: 600px;
 }
 
 .globe-container::before {
@@ -325,6 +327,10 @@ body::before {
     border-radius: 16px;
   }
   
+  .globe-container {
+    min-height: 500px;
+  }
+  
   .stat-card {
     padding: 20px;
     margin-bottom: 16px;
@@ -351,6 +357,10 @@ body::before {
   .stats-panel {
     padding: 16px;
     border-radius: 12px;
+  }
+  
+  .globe-container {
+    min-height: 400px;
   }
   
   .header h1 {

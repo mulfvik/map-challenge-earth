@@ -596,8 +596,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 24px;
     width: 100%;
+    min-height: 100%;
   }
   
   svg {
@@ -609,6 +611,8 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
   }
   
   svg:hover {
@@ -667,6 +671,10 @@
   
   /* Responsive globe sizing */
   @media (max-width: 1024px) {
+    .globe-wrapper {
+      gap: 20px;
+    }
+    
     svg {
       width: min(500px, 90vw);
       height: min(500px, 90vw);
@@ -674,10 +682,20 @@
   }
   
   @media (max-width: 768px) {
+    .globe-wrapper {
+      gap: 16px;
+      padding: 0 16px;
+    }
+    
     svg {
       width: min(400px, 85vw);
       height: min(400px, 85vw);
       border-radius: 16px;
+    }
+    
+    .globe-controls {
+      width: 100%;
+      justify-content: center;
     }
     
     .globe-controls button {
@@ -687,15 +705,22 @@
   }
   
   @media (max-width: 480px) {
+    .globe-wrapper {
+      gap: 12px;
+      padding: 0 12px;
+    }
+    
     svg {
-      width: min(320px, 80vw);
-      height: min(320px, 80vw);
+      width: min(320px, 85vw);
+      height: min(320px, 85vw);
       border-radius: 12px;
     }
     
     .globe-controls button {
       padding: 10px 20px;
       font-size: 0.85rem;
+      width: 100%;
+      max-width: 200px;
     }
   }
 </style>
