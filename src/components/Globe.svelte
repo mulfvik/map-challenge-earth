@@ -559,35 +559,60 @@
     // Start auto-rotation
     startAutoRotation();
     
+    // Helper function to get coordinates from mouse or touch event
+    function getEventCoordinates(event) {
+      if (event.touches && event.touches.length > 0) {
+        return [event.touches[0].clientX, event.touches[0].clientY];
+      }
+      return [event.clientX, event.clientY];
+    }
+
+    // Helper function to handle drag start
+    function handleDragStart(event) {
+      isDragging = true;
+      isRotating = false;
+      lastMouse = getEventCoordinates(event);
+      event.preventDefault(); // Prevent default touch behavior
+    }
+
+    // Helper function to handle drag move
+    function handleDragMove(event) {
+      if (isDragging) {
+        const coords = getEventCoordinates(event);
+        const deltaX = coords[0] - lastMouse[0];
+        const deltaY = coords[1] - lastMouse[1];
+        
+        rotation[0] += deltaX * 0.5;
+        rotation[1] -= deltaY * 0.5;
+        rotation[1] = Math.max(-90, Math.min(90, rotation[1]));
+        
+        projection.rotate(rotation);
+        svgElement.selectAll("path").attr("d", path);
+        
+        lastMouse = coords;
+        event.preventDefault(); // Prevent scrolling on touch
+      }
+    }
+
+    // Helper function to handle drag end
+    function handleDragEnd(event) {
+      isDragging = false;
+      setTimeout(() => { 
+        isRotating = true;
+        startAutoRotation();
+      }, 2000);
+      event.preventDefault();
+    }
+
     svgElement
-      .on("mousedown", function(event) {
-        isDragging = true;
-        isRotating = false;
-        lastMouse = [event.clientX, event.clientY];
-      })
-      .on("mousemove", function(event) {
-        if (isDragging) {
-          const mouse = [event.clientX, event.clientY];
-          const deltaX = mouse[0] - lastMouse[0];
-          const deltaY = mouse[1] - lastMouse[1];
-          
-          rotation[0] += deltaX * 0.5;
-          rotation[1] -= deltaY * 0.5;
-          rotation[1] = Math.max(-90, Math.min(90, rotation[1]));
-          
-          projection.rotate(rotation);
-          svgElement.selectAll("path").attr("d", path);
-          
-          lastMouse = mouse;
-        }
-      })
-      .on("mouseup", function() {
-        isDragging = false;
-        setTimeout(() => { 
-          isRotating = true;
-          startAutoRotation();
-        }, 2000);
-      });
+      // Mouse events
+      .on("mousedown", handleDragStart)
+      .on("mousemove", handleDragMove)
+      .on("mouseup", handleDragEnd)
+      // Touch events
+      .on("touchstart", handleDragStart)
+      .on("touchmove", handleDragMove)
+      .on("touchend", handleDragEnd);
     
     // Add resize listener to update projection
     const handleResize = () => {
@@ -643,6 +668,12 @@
     aspect-ratio: 1;
     display: block;
     margin: 0 auto;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: none;
   }
   
   svg:hover {
@@ -650,6 +681,10 @@
     box-shadow: 
       0 32px 64px -12px rgba(0, 0, 0, 0.6),
       0 0 0 1px rgba(255, 255, 255, 0.3);
+  }
+
+  svg:active {
+    cursor: grabbing;
   }
   
   .globe-controls {
