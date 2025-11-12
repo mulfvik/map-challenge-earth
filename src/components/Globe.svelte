@@ -96,6 +96,9 @@
   let rotationTimer;
   let isDragging = false;
   let lastMouse = [0, 0];
+  let dragStartTime = 0;
+  let dragStartPos = [0, 0];
+  let hasDragged = false;
 
   // Auto-rotation function
   function startAutoRotation() {
@@ -569,10 +572,17 @@
 
     // Helper function to handle drag start
     function handleDragStart(event) {
+      const coords = getEventCoordinates(event);
+      dragStartTime = Date.now();
+      dragStartPos = coords;
+      lastMouse = coords;
+      hasDragged = false;
       isDragging = true;
-      isRotating = false;
-      lastMouse = getEventCoordinates(event);
-      event.preventDefault(); // Prevent default touch behavior
+      
+      // Only prevent default for touch events to avoid interfering with mouse clicks
+      if (event.type.startsWith('touch')) {
+        event.preventDefault();
+      }
     }
 
     // Helper function to handle drag move
@@ -582,26 +592,57 @@
         const deltaX = coords[0] - lastMouse[0];
         const deltaY = coords[1] - lastMouse[1];
         
-        rotation[0] += deltaX * 0.5;
-        rotation[1] -= deltaY * 0.5;
-        rotation[1] = Math.max(-90, Math.min(90, rotation[1]));
+        // Check if we've moved enough to consider this a drag (threshold: 5 pixels)
+        const totalDelta = Math.sqrt(
+          Math.pow(coords[0] - dragStartPos[0], 2) + 
+          Math.pow(coords[1] - dragStartPos[1], 2)
+        );
         
-        projection.rotate(rotation);
-        svgElement.selectAll("path").attr("d", path);
+        if (totalDelta > 5) {
+          hasDragged = true;
+          isRotating = false;
+          
+          rotation[0] += deltaX * 0.5;
+          rotation[1] -= deltaY * 0.5;
+          rotation[1] = Math.max(-90, Math.min(90, rotation[1]));
+          
+          projection.rotate(rotation);
+          svgElement.selectAll("path").attr("d", path);
+          
+          // Prevent default behavior only when actually dragging
+          event.preventDefault();
+        }
         
         lastMouse = coords;
-        event.preventDefault(); // Prevent scrolling on touch
       }
     }
 
     // Helper function to handle drag end
     function handleDragEnd(event) {
+      const dragDuration = Date.now() - dragStartTime;
+      const wasDragging = hasDragged;
+      
+      // If it was a quick tap/click without significant movement, don't interfere
+      if (!hasDragged && dragDuration < 300) {
+        isDragging = false;
+        return; // Let the country click handler work
+      }
+      
       isDragging = false;
-      setTimeout(() => { 
-        isRotating = true;
-        startAutoRotation();
-      }, 2000);
-      event.preventDefault();
+      hasDragged = false;
+      
+      // Only restart auto-rotation if we actually dragged
+      if (wasDragging) {
+        setTimeout(() => { 
+          isRotating = true;
+          startAutoRotation();
+        }, 2000);
+        
+        // Prevent default behavior only when we actually dragged
+        if (event.type.startsWith('touch')) {
+          event.preventDefault();
+        }
+      }
     }
 
     svgElement
